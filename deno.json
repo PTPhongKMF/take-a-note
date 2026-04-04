@@ -1,0 +1,36 @@
+{
+  "name": "take-a-note",
+  "version": "0.0.0",
+  "description": "A zero-login, frictionless note-taking web application. Features offline-first storage (IndexedDB) and secure, serverless device-to-device syncing.",
+  "license": "AGPL-3.0-or-later",
+
+  "exports": "./README.md",
+
+  "tasks": {
+    "dev": "vite",
+    "build": "vite build"
+  },
+
+  "nodeModulesDir": "auto",
+  "imports": {
+    "solid-js": "npm:solid-js@^1.9.12",
+    "vite": "npm:vite@^8.0.3",
+    "vite-plugin-solid": "npm:vite-plugin-solid@^2.11.11"
+  },
+
+  "compilerOptions": {
+    "module": "esnext",
+    "lib": ["esnext", "dom", "dom.iterable", "deno.ns"],
+    "types": ["vite/client"],
+
+    "moduleResolution": "bundler",
+    "jsx": "preserve",
+    "jsxImportSource": "solid-js",
+
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "erasableSyntaxOnly": true,
+    "noFallthroughCasesInSwitch": true
+  }
+}
