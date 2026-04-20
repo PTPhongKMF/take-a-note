@@ -1,6 +1,8 @@
 {
   "$schema": "https://raw.githubusercontent.com/ptphongkmf/zephyr-release/refs/heads/canary/schemas/v1/config-v1.kebab.json",
 
+  "time-zone": "Asia/Ho_Chi_Minh",
+
   "review": {
     "body-template-path": ".zephyr-release/templates/review-body.liquid"
   },
