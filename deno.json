@@ -13,13 +13,22 @@
 
   "nodeModulesDir": "auto",
   "imports": {
+    "@deno/vite-plugin": "npm:@deno/vite-plugin@^2.0.2",
+    "@pages/": "./src/pages/",
+    "@app/": "./src/app/",
+    "@shared/": "./src/shared/",
+
     "@tailwindcss/vite": "npm:@tailwindcss/vite@^4.2.3",
+    "@tanstack/router-plugin": "npm:@tanstack/router-plugin@^1.167.22",
     "@tanstack/solid-router": "npm:@tanstack/solid-router@^1.168.20",
     "solid-js": "npm:solid-js@^1.9.12",
     "tailwindcss": "npm:tailwindcss@^4.2.3",
     "vite": "npm:vite@^8.0.3",
+    "vite-plugin-icons-spritesheet": "npm:vite-plugin-icons-spritesheet@^3.0.1",
     "vite-plugin-solid": "npm:vite-plugin-solid@^2.11.11"
   },
+
+  "exclude": [],
 
   "compilerOptions": {
     "module": "esnext",
