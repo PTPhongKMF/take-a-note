@@ -1,17 +1,17 @@
 import { Outlet } from "@tanstack/solid-router";
 import { Link } from "@tanstack/solid-router";
-import Icon from "@shared/components/icon/icon.tsx";
+import Icon from "#shared/components/icon/icon.tsx";
 
 export default function RootLayout() {
   return (
     <div class="flex w-full flex-col">
       <div class="grid min-h-dvh grid-rows-[auto_1fr]">
-        <header class="@container/nav bg-yellow-200 px-12 py-1 text-2xl  text-walnut">
+        <header class="@container/nav bg-yellow-200 px-12 py-1 text-2xl text-walnut">
           <Link
             to="/"
-            class="font-pencil text-f4xl font-bold transition-all duration-200 hover:text-amber-800"
+            class="inline-block font-pencil text-f4xl font-bold transition-all duration-200 hover:scale-105 hover:rotate-3 hover:text-amber-800"
           >
-            Take a Note!
+            Take a Note
           </Link>
         </header>
 
