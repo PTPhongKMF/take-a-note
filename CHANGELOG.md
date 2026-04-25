@@ -3,6 +3,17 @@
 <br>
 
 <!-- CHANGELOG-BODY-START -->
+## [0.1.1](https://github.com/ptphongkmf/take-a-note/compare/v0.1.0...v0.1.1) (2026-04-25) <!-- timezone: Asia/Ho_Chi_Minh -->
+
+### Features
+
+- **home:** add simple first home page ([2120869](https://github.com/ptphongkmf/take-a-note/commit/2120869f30f06d31bffcf17212f76a48d7bb85e0))
+- **home:** fine-tune note taking layout ([9a90025](https://github.com/ptphongkmf/take-a-note/commit/9a90025eb586b7bd694d726d369515f865e8477f))
+
+### Bug Fixes
+
+- **typography:** fine-tune fluid text clamp values ([1cc5965](https://github.com/ptphongkmf/take-a-note/commit/1cc596522a5c03341e8c194de9c17ad3f8031159))
+
 ## [0.1.0](v0.1.0) (2026-04-21) <!-- timezone: Asia/Ho_Chi_Minh -->
 
 ### Features
