@@ -1,4 +1,4 @@
 import { createRootRoute } from "@tanstack/solid-router";
-import RootLayout from "#app/layout/root.layout.tsx";
+import Root from "#app/layouts/root.tsx";
 
-export const Route = createRootRoute({ component: RootLayout });
+export const Route = createRootRoute({ component: Root });

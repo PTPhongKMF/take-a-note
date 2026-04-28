@@ -1,8 +1,8 @@
 import { Outlet } from "@tanstack/solid-router";
 import { Link } from "@tanstack/solid-router";
-import Icon from "#shared/components/icon/icon.tsx";
+import Icon from "#shared/ui/icon/icon.tsx";
 
-export default function RootLayout() {
+export default function Root() {
   return (
     <div class="flex w-full flex-col">
       <div class="grid min-h-dvh grid-rows-[auto_1fr]">

@@ -2,10 +2,16 @@
   "version": "5",
   "specifiers": {
     "jsr:@ryu/deno-lint-plugin-tailwindcss@0.2.0": "0.2.0",
+    "jsr:@std/bytes@^1.0.6": "1.0.6",
+    "jsr:@std/crypto@^1.1.0": "1.1.0",
+    "jsr:@std/uuid@^1.1.1": "1.1.1",
+    "jsr:@valibot/valibot@^1.3.1": "1.3.1",
     "npm:@deno/vite-plugin@^2.0.2": "2.0.2_vite@8.0.3__@emnapi+core@1.9.2__@emnapi+runtime@1.9.2",
+    "npm:@praha/byethrow@~0.11.1": "0.11.1_typescript@6.0.3",
     "npm:@tailwindcss/vite@^4.2.3": "4.2.3_vite@8.0.3__@emnapi+core@1.9.2__@emnapi+runtime@1.9.2",
     "npm:@tanstack/router-plugin@^1.167.22": "1.167.22_vite@8.0.3__@emnapi+core@1.9.2__@emnapi+runtime@1.9.2_vite-plugin-solid@2.11.11__solid-js@1.9.12__vite@8.0.3___@emnapi+core@1.9.2___@emnapi+runtime@1.9.2__@emnapi+core@1.9.2__@emnapi+runtime@1.9.2",
     "npm:@tanstack/solid-router@^1.168.20": "1.168.20_solid-js@1.9.12",
+    "npm:idb@^8.0.3": "8.0.3",
     "npm:solid-js@^1.9.12": "1.9.12",
     "npm:tailwindcss@^4.2.3": "4.2.3",
     "npm:vite-plugin-icons-spritesheet@^3.0.1": "3.0.1_vite@8.0.3__@emnapi+core@1.9.2__@emnapi+runtime@1.9.2",
@@ -15,6 +21,22 @@
   "jsr": {
     "@ryu/deno-lint-plugin-tailwindcss@0.2.0": {
       "integrity": "1522555fefd6c6f7e6722b15201a7d76ee0e4fc273d4fc28892d587be132ba13"
+    },
+    "@std/bytes@1.0.6": {
+      "integrity": "f6ac6adbd8ccd99314045f5703e23af0a68d7f7e58364b47d2c7f408aeb5820a"
+    },
+    "@std/crypto@1.1.0": {
+      "integrity": "b8d6d0a6377a32b213af2661ed7bf1062d94feac0c57def5526a8e74a95c3ec8"
+    },
+    "@std/uuid@1.1.1": {
+      "integrity": "7b49060282d90f72fec64952f8c7a2914cbe6fdba3eca665f8cedc90830154a7",
+      "dependencies": [
+        "jsr:@std/bytes",
+        "jsr:@std/crypto"
+      ]
+    },
+    "@valibot/valibot@1.3.1": {
+      "integrity": "635faaec9d32a25efca7b4614e7a07306cc03937bfd0679e05530d31081bc501"
     }
   },
   "npm": {
@@ -391,6 +413,13 @@
     "@oxc-project/types@0.122.0": {
       "integrity": "sha512-oLAl5kBpV4w69UtFZ9xqcmTi+GENWOcPF7FCrczTiBbmC0ibXxCwyvZGbO39rCVEuLGAZM84DH0pUIyyv/YJzA=="
     },
+    "@praha/byethrow@0.11.1_typescript@6.0.3": {
+      "integrity": "sha512-rvtxuCpi+/qq1trcHLTsl1q4hrPWYoSQtYW5ekgHYpVBXwa9imQnLrJsjpl2dZNbOvpdCdY+R7ox88k7k21hwA==",
+      "dependencies": [
+        "@standard-schema/spec",
+        "typescript"
+      ]
+    },
     "@rolldown/binding-android-arm64@1.0.0-rc.12": {
       "integrity": "sha512-pv1y2Fv0JybcykuiiD3qBOBdz6RteYojRFY1d+b95WVuzx211CRh+ytI/+9iVyWQ6koTh5dawe4S/yRfOFjgaA==",
       "os": ["android"],
@@ -603,6 +632,9 @@
       "dependencies": [
         "solid-js"
       ]
+    },
+    "@standard-schema/spec@1.1.0": {
+      "integrity": "sha512-l2aFy5jALhniG5HgqrD6jXLi/rUWrKvqN/qJx6yoJsgKhblVd+iqqU4RCXavm/jPityDo5TCvKMnpjKnOriy0w=="
     },
     "@tailwindcss/node@4.2.3": {
       "integrity": "sha512-dhXFXkW2dGvX4r/fi24gyXM0t1mFMrpykQjqrdA4SuavaMagm4SY1u5G2SCJwu1/0x/5RlZJ2VPjP3mKYQfCkA==",
@@ -1104,6 +1136,9 @@
     "html-entities@2.3.3": {
       "integrity": "sha512-DV5Ln36z34NNTDgnz0EWGBLZENelNAtkiFA4kyNOG2tDI6Mz1uSWiq1wAKdyjnJwyDiDO7Fa2SO1CTxPXL8VxA=="
     },
+    "idb@8.0.3": {
+      "integrity": "sha512-LtwtVyVYO5BqRvcsKuB2iUMnHwPVByPCXFXOpuU96IZPPoPN6xjOGxZQ74pgSVVLQWtUOYgyeL4GE98BY5D3wg=="
+    },
     "is-binary-path@2.1.0": {
       "integrity": "sha512-ZMERYes6pDydyuGidse7OsHxtbI7WVeUEozgR/g7rd0xUimYNlvZRE/K2MgZTjWy725IfelLeVcEM97mmtRGXw==",
       "dependencies": [
@@ -1440,6 +1475,10 @@
       ],
       "bin": true
     },
+    "typescript@6.0.3": {
+      "integrity": "sha512-y2TvuxSZPDyQakkFRPZHKFm+KKVqIisdg9/CZwm9ftvKXLP8NRWj38/ODjNbr43SsoXqNuAisEf1GdCxqWcdBw==",
+      "bin": true
+    },
     "unplugin@2.3.11": {
       "integrity": "sha512-5uKD0nqiYVzlmCRs01Fhs2BdkEgBS3SAVP6ndrBsuK42iC2+JHyxM05Rm9G8+5mkmRtzMZGY8Ct5+mliZxU/Ww==",
       "dependencies": [
@@ -1523,10 +1562,14 @@
   },
   "workspace": {
     "dependencies": [
+      "jsr:@std/uuid@^1.1.1",
+      "jsr:@valibot/valibot@^1.3.1",
       "npm:@deno/vite-plugin@^2.0.2",
+      "npm:@praha/byethrow@~0.11.1",
       "npm:@tailwindcss/vite@^4.2.3",
       "npm:@tanstack/router-plugin@^1.167.22",
       "npm:@tanstack/solid-router@^1.168.20",
+      "npm:idb@^8.0.3",
       "npm:solid-js@^1.9.12",
       "npm:tailwindcss@^4.2.3",
       "npm:vite-plugin-icons-spritesheet@^3.0.1",

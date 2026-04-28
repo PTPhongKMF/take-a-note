@@ -18,7 +18,7 @@ export default function Home() {
 
         <textarea
           placeholder="Note content..."
-          class="size-full resize-y rounded-sm border border-amber-600 bg-paper-editor px-3 py-2 text-base focus:outline-3 focus:outline-amber-300 
+          class="size-full min-h-fit resize-y rounded-sm border border-amber-600 bg-paper-editor px-3 py-2 text-base focus:outline-3 focus:outline-amber-300 
           @5xl/main:col-start-2 @5xl/main:row-start-2"
         />
 

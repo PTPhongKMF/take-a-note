@@ -20,7 +20,7 @@ export default defineConfig({
       withTypes: true,
       inputDir: "src/shared/assets/icons",
       outputDir: "src/shared/assets/sprites",
-      typesOutputFile: "src/shared/components/icon/icon-type.generated.ts",
+      typesOutputFile: "src/shared/ui/icon/icons.gen.ts",
       fileName: "sprite.svg",
       cwd: Deno.cwd(),
       iconNameTransformer: (iconName) => iconName,
