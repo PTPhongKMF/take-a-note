@@ -1,17 +1,25 @@
-import type { IDBPDatabase, IDBPTransaction } from "idb";
+import type { IDBPDatabase, IDBPTransaction, StoreNames } from "idb";
 import { runInitialSchema } from "#shared/storage/idb/migrations/001_initial_schema.ts";
-import { MigrationError } from "#shared/storage/idb/migrations/error.ts";
+import { MigrationError } from "#shared/storage/idb/errors.ts";
+import type { TakeANoteDbSchema } from "#shared/storage/idb/schemas.ts";
 
 /**
  * @throws {MigrationError} when migration fails
  */
 export function runMigrations(
-  db: IDBPDatabase,
+  rawDb: IDBPDatabase<TakeANoteDbSchema>,
   oldVersion: number,
   _newVersion: number | null,
-  _transaction: IDBPTransaction<unknown, string[], "versionchange">,
+  rawTransaction: IDBPTransaction<
+    TakeANoteDbSchema,
+    StoreNames<TakeANoteDbSchema>[],
+    "versionchange"
+  >,
   _event: IDBVersionChangeEvent,
 ) {
+  const db = rawDb as IDBPDatabase;
+  const _transaction = rawTransaction as unknown as IDBPTransaction;
+
   let versionBeingApplied = 0;
 
   try {

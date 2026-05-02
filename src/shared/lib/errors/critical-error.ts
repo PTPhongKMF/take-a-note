@@ -8,10 +8,10 @@ export class CriticalError extends Error {
 
   constructor(
     message = "A critical system error occurred",
-    opts?: CriticalErrorOptions,
+    options?: CriticalErrorOptions,
   ) {
-    super(message, opts);
+    super(message, options);
 
-    this.metadata = opts?.metadata;
+    this.metadata = options?.metadata;
   }
 }

@@ -1,7 +1,7 @@
 import { createForm, Field, Form, getInput } from "@formisch/solid";
 import { type ComponentProps, createSignal, splitProps } from "solid-js";
 import { c } from "#shared/lib/class-merger/c.ts";
-import { type NoteOutput, NoteSchema } from "#entities/note/note.schema.ts";
+import { type NoteOutput, NoteSchema } from "#entities/note/model/schema.ts";
 import { monotonicUlid } from "@std/ulid";
 import { Editor, EditorInput } from "#shared/editor/lexical-editor.tsx";
 import * as v from "@valibot/valibot";
@@ -23,7 +23,7 @@ export default function NoteEditor(props: NoteEditorProps) {
 
   const [noteContent, setNoteContent] = createSignal<
     SerializedEditorState | undefined
-  >(local.note?.content || undefined);
+  >(local.note?.content ?? undefined);
 
   const noteForm = createForm({
     schema: NoteFormSchema,

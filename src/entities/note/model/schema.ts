@@ -1,8 +1,5 @@
 import * as v from "@valibot/valibot";
-import {
-  EditorModes,
-  LexicalEditorAstSchema,
-} from "#shared/editor/model/schema.ts";
+import { EditorModes, LexicalEditorAstSchema } from "#shared/editor/schema.ts";
 
 export const NoteSchema = v.object({
   id: v.string(),

@@ -2,7 +2,7 @@ import { Outlet } from "@tanstack/solid-router";
 import { Link } from "@tanstack/solid-router";
 import Icon from "#shared/ui/icon/icon.tsx";
 
-export default function Root() {
+export default function RootLayout() {
   return (
     <div class="grid w-full auto-rows-auto grid-cols-1">
       <div class="grid min-h-dvh grid-rows-[auto_1fr]">

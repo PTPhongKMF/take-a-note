@@ -2,8 +2,9 @@ import { createSignal } from "solid-js";
 import { type IDBPDatabase, openDB } from "idb";
 import { Result } from "@praha/byethrow";
 import { runMigrations } from "#shared/storage/idb/migrate.ts";
-import { MigrationError } from "#shared/storage/idb/migrations/error.ts";
+import { MigrationError } from "#shared/storage/idb/errors.ts";
 import { CriticalError } from "#shared/lib/errors/critical-error.ts";
+import type { TakeANoteDbSchema } from "#shared/storage/idb/schemas.ts";
 
 const IDB_NAME = "takeanote-db";
 const IDB_VERSION = 1;
@@ -21,12 +22,12 @@ export const [idbError, setIdbError] = createSignal<Error | undefined>(
   undefined,
 );
 
-let idbInstance: IDBPDatabase | undefined = undefined;
+let idbInstance: IDBPDatabase<TakeANoteDbSchema> | undefined = undefined;
 
 export async function initIndexedDB() {
   const openDBResult = await Result.try({
     try: () =>
-      openDB(IDB_NAME, IDB_VERSION, {
+      openDB<TakeANoteDbSchema>(IDB_NAME, IDB_VERSION, {
         upgrade: runMigrations,
         blocked: () => setIdbState("blocked"),
         blocking: () => {

@@ -16,8 +16,8 @@ import {
   useContext,
 } from "solid-js";
 import { c } from "#shared/lib/class-merger/c.ts";
-import type { EditorMode } from "#shared/editor/model/schema.ts";
-import { getEditorInitialConfig } from "#shared/editor/model/initial-config.ts";
+import type { EditorMode } from "#shared/editor/schema.ts";
+import { getEditorInitialConfig } from "#shared/editor/initial-config.ts";
 
 const EditorModeContext = createContext<EditorMode>("plain-text");
 

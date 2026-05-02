@@ -1,4 +1,4 @@
-import type { EditorMode } from "#shared/editor/model/schema.ts";
+import type { EditorMode } from "#shared/editor/schema.ts";
 import type { SerializedEditorState } from "lexical";
 import type { InitialConfigType } from "@ryotarofr/lexical-solid/LexicalComposer";
 
@@ -14,7 +14,7 @@ export function getEditorInitialConfig(
       }
       : undefined,
 
-    onError: (_e) => {/** TODO */},
+    onError: (_e) => {/** TODO: trigger toast */},
   } satisfies Partial<InitialConfigType>;
 
   switch (mode) {
