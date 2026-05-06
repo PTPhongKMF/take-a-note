@@ -2,7 +2,7 @@ import * as v from "@valibot/valibot";
 import { Result } from "@praha/byethrow";
 import { AppError } from "#shared/lib/errors/app-error.ts";
 
-type ValidationErrorCode = "VALIBOT_VALIDATION_FAILED";
+type ValidationErrorCode = "VALIDATION_FAILED";
 
 interface ValidationErrorOptions extends ErrorOptions {
   code?: ValidationErrorCode;
@@ -15,12 +15,12 @@ class ValidationError extends AppError<ValidationErrorCode> {
     message = "Validation failed",
     opts?: ValidationErrorOptions,
   ) {
-    super(message, { ...opts, code: "VALIBOT_VALIDATION_FAILED" });
+    super(message, { ...opts, code: "VALIDATION_FAILED" });
   }
 }
 
 // sync schema
-export function parseSafe<
+export function safeParse<
   TSchema extends v.BaseSchema<unknown, unknown, v.BaseIssue<unknown>>,
 >(
   schema: TSchema,
@@ -28,14 +28,14 @@ export function parseSafe<
 ): Result.Result<v.InferOutput<TSchema>, ValidationError>;
 
 // async schema
-export function parseSafe<
+export function safeParse<
   TSchema extends v.BaseSchemaAsync<unknown, unknown, v.BaseIssue<unknown>>,
 >(
   schema: TSchema,
   input: unknown,
 ): Result.ResultAsync<v.InferOutput<TSchema>, ValidationError>;
 
-export function parseSafe(
+export function safeParse(
   schema:
     | v.BaseSchema<unknown, unknown, v.BaseIssue<unknown>>
     | v.BaseSchemaAsync<unknown, unknown, v.BaseIssue<unknown>>,

@@ -13,13 +13,43 @@ export class MigrationError extends CriticalError {
       {
         ...options,
         metadata: {
-          "Target Version": version,
-          "Storage Supported": navigator.storage ? "Yes" : "No",
+          "Target Migration Version": version,
+          "Is IndexedDB Supported": (typeof window !== "undefined" &&
+              !!globalThis.indexedDB)
+            ? "Yes"
+            : "No",
+          "Is Storage Api Supported": (typeof navigator !== "undefined" &&
+              !!navigator.storage)
+            ? "Yes"
+            : "No",
         },
       },
     );
 
     this.version = version;
+  }
+}
+
+export class IdbUnknownError extends CriticalError {
+  public override readonly name = "IdbUnknownError";
+
+  constructor(
+    message = "An unknown indexedDB error occurred",
+    options?: ErrorOptions,
+  ) {
+    super(message, {
+      ...options,
+      metadata: {
+        "Is IndexedDB Supported": (typeof window !== "undefined" &&
+            !!globalThis.indexedDB)
+          ? "Yes"
+          : "No",
+        "Is Storage Api Supported": (typeof navigator !== "undefined" &&
+            !!navigator.storage)
+          ? "Yes"
+          : "No",
+      },
+    });
   }
 }
 
@@ -53,7 +83,6 @@ export class IdbOperationError extends AppError<IdbErrorCode> {
     store: ObjectStore,
     options?: IdbOperationErrorOptions,
   );
-
   constructor(
     action: IdbAction,
     store: ObjectStore,

@@ -1,36 +1,31 @@
-import * as v from "@valibot/valibot";
 import type { DBSchema } from "idb";
-import { EditorModes, LexicalEditorAstSchema } from "#shared/editor/schema.ts";
+import type { EditorMode } from "#shared/editor/schema.ts";
 
-export const NoteMetaIdbSchema = v.object({
-  id: v.string(),
-  mode: v.enum(EditorModes),
-  title: v.string(),
-  isCorrupt: v.boolean(),
-  createdAt: v.string(),
-  updatedAt: v.string(),
-});
+interface NoteMetaIdb {
+  id: string;
+  mode: EditorMode;
+  title: string;
+  isCorrupt: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
 
-export type NoteMetaIdbOutput = v.InferOutput<typeof NoteMetaIdbSchema>;
-
-export const NoteContentIdbSchema = v.object({
-  noteId: v.string(),
-  content: LexicalEditorAstSchema,
-});
-
-export type NoteContentIdbOutput = v.InferOutput<typeof NoteContentIdbSchema>;
+interface NoteContentIdb {
+  noteId: string;
+  content: unknown; // lexical complex editor state here
+}
 
 export interface TakeANoteDbSchema extends DBSchema {
   note_meta: {
-    key: NoteMetaIdbOutput["id"];
-    value: NoteMetaIdbOutput;
+    key: NoteMetaIdb["id"];
+    value: NoteMetaIdb;
     indexes: {
-      updatedAt: NoteMetaIdbOutput["updatedAt"];
+      updatedAt: NoteMetaIdb["updatedAt"];
     };
   };
 
   note_content: {
-    key: NoteContentIdbOutput["noteId"];
-    value: NoteContentIdbOutput;
+    key: NoteContentIdb["noteId"];
+    value: NoteContentIdb;
   };
 }
