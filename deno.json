@@ -22,6 +22,7 @@
     "@deno/vite-plugin": "npm:@deno/vite-plugin@^2.0.2",
     "@formisch/solid": "npm:@formisch/solid@^0.9.5",
     "@kobalte/core": "npm:@kobalte/core@^0.13.11",
+    "@lexical/utils": "npm:@lexical/utils@~0.39.0",
     "@praha/byethrow": "npm:@praha/byethrow@^0.11.1",
     "@ryotarofr/lexical-solid": "npm:@ryotarofr/lexical-solid@^0.39.0",
     "@std/text": "jsr:@std/text@^1.0.18",

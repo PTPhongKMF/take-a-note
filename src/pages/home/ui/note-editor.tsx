@@ -121,7 +121,7 @@ export default function NoteEditor(props: NoteEditorProps) {
 
       <div class="flex flex-col gap-1.5 text-fluid-sm">
         <Editor
-          mode={getInput(noteForm, { path: ["format"] }) ?? "plain-text"}
+          format={getInput(noteForm, { path: ["format"] }) ?? "plain-text"}
           value={noteContent()}
           onInput={setNoteContent}
           class="size-full min-h-fit"

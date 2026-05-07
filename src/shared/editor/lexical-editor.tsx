@@ -21,12 +21,13 @@ import { c } from "#shared/lib/class-merger/c.ts";
 import type { EditorFormat } from "#shared/editor/schema.ts";
 import { getEditorInitialConfig } from "#shared/editor/initial-config.ts";
 import { DraggableBlockPlugin } from "#shared/editor/plugins/draggable-block.tsx";
+import ActiveBlockIndicatorPlugin from "#shared/editor/plugins/active-block-indicator.tsx";
 
-const EditorModeContext = createContext<EditorFormat>("plain-text");
+const EditorFormatContext = createContext<EditorFormat>("plain-text");
 
 interface EditorProps
   extends Omit<ComponentProps<"div">, "onInput">, ParentProps {
-  mode: EditorFormat;
+  format: EditorFormat;
   value?: SerializedEditorState;
   onInput?: (value: SerializedEditorState) => void;
 }
@@ -36,14 +37,14 @@ interface EditorProps
  */
 export function Editor(props: EditorProps) {
   const [local, others] = splitProps(props, [
-    "mode",
+    "format",
     "value",
     "onInput",
     "class",
     "children",
   ]);
 
-  const initialConfig = getEditorInitialConfig(local.mode, local.value);
+  const initialConfig = getEditorInitialConfig(local.format, local.value);
 
   function handleEditorChange(editorState: EditorState) {
     if (local.onInput) {
@@ -53,13 +54,13 @@ export function Editor(props: EditorProps) {
   }
 
   return (
-    <Show when={local.mode} keyed>
-      {(mode) => (
+    <Show when={local.format} keyed>
+      {(fmt) => (
         <LexicalComposer initialConfig={initialConfig}>
           <div {...others} class={c("relative size-full", local.class)}>
-            <EditorModeContext.Provider value={mode}>
+            <EditorFormatContext.Provider value={fmt}>
               {local.children}
-            </EditorModeContext.Provider>
+            </EditorFormatContext.Provider>
           </div>
 
           <HistoryPlugin />
@@ -87,7 +88,7 @@ export function EditorInput(props: EditorInputProps) {
     if (divWrapperRef) setWrapperRef(divWrapperRef);
   });
 
-  const mode = useContext(EditorModeContext);
+  const format = useContext(EditorFormatContext);
 
   function placeholderFn() {
     return (
@@ -109,7 +110,7 @@ export function EditorInput(props: EditorInputProps) {
       class="relative size-full"
     >
       <Switch>
-        <Match when={mode === "plain-text"}>
+        <Match when={format === "plain-text"}>
           <RichTextPlugin
             contentEditable={
               <ContentEditable
@@ -124,6 +125,7 @@ export function EditorInput(props: EditorInputProps) {
         </Match>
       </Switch>
 
+      <ActiveBlockIndicatorPlugin />
       <Show when={wrapperRef()}>
         {(ref) => <DraggableBlockPlugin anchorRef={ref()} />}
       </Show>
