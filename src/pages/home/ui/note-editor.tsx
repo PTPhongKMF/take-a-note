@@ -1,13 +1,17 @@
-import { createForm, Field, Form, getInput } from "@formisch/solid";
-import { type ComponentProps, createSignal, splitProps } from "solid-js";
+import {
+  createForm,
+  Field,
+  Form,
+  getAllErrors,
+  getInput,
+} from "@formisch/solid";
+import { type ComponentProps, splitProps } from "solid-js";
 import { toTitleCase } from "@std/text/unstable-to-title-case";
 import { toPascalCase } from "@std/text";
 import { c } from "#shared/lib/class-merger/c.ts";
 import { type NoteOutput, NoteSchema } from "#entities/note/model/schema.ts";
 import { monotonicUlid } from "@std/ulid";
 import { Editor, EditorInput } from "#shared/editor/lexical-editor.tsx";
-import * as v from "@valibot/valibot";
-import type { SerializedEditorState } from "lexical";
 import {
   Select,
   SelectContent,
@@ -19,6 +23,7 @@ import {
 } from "#shared/ui/select/solidui-select.tsx";
 import { EditorFormats } from "#shared/editor/schema.ts";
 import { Separator } from "@kobalte/core/separator";
+import { createEffect } from "solid-js";
 
 interface NoteEditorProps extends
   Omit<
@@ -28,30 +33,26 @@ interface NoteEditorProps extends
   note?: NoteOutput;
 }
 
-const NoteFormSchema = v.omit(NoteSchema, ["content"]);
-type NoteFormOutput = v.InferOutput<typeof NoteFormSchema>;
-
 export default function NoteEditor(props: NoteEditorProps) {
   const [local, others] = splitProps(props, ["class", "note"]);
 
-  const [noteContent, setNoteContent] = createSignal<
-    SerializedEditorState | undefined
-  >(local.note?.content ?? undefined);
-
   const noteForm = createForm({
-    schema: NoteFormSchema,
+    schema: NoteSchema,
     initialInput: {
       id: local.note?.id ?? monotonicUlid(),
       format: local.note?.format ?? "plain-text",
       title: local.note?.title ?? "",
+      content: local.note?.content ?? undefined,
       createdAt: local.note?.createdAt ?? Temporal.Now.instant().toString(),
       updatedAt: local.note?.updatedAt ?? Temporal.Now.instant().toString(),
     },
   });
 
-  function handleSaveNote(output: NoteFormOutput) {
-    console.log("Saving note:", { ...output, content: noteContent() });
+  function handleSaveNote(output: NoteOutput) {
+    console.log("Saving note:", { ...output });
   }
+
+  createEffect(() => console.log(getAllErrors(noteForm)));
 
   return (
     <Form
@@ -70,7 +71,7 @@ export default function NoteEditor(props: NoteEditorProps) {
               {...field.props}
               value={field.input}
               placeholder="Note title..."
-              class={`col-span-4 w-full self-start rounded-none border-b-3 outline-none border-transparent bg-transparent py-2 text-base font-semibold 
+              class={`col-span-4 w-full self-start rounded-none border-b-3 px-1 outline-none border-transparent bg-transparent py-1 text-base font-bold 
                 transition-colors duration-200
                 focus:border-amber-600`}
             />
@@ -92,17 +93,19 @@ export default function NoteEditor(props: NoteEditorProps) {
                   {toPascalCase(props.item.rawValue)}
                 </SelectItem>
               )}
-              class="col-span-2 justify-start gap-2 justify-self-start"
+              class="col-span-2 flex items-center justify-center gap-0.75 justify-self-start px-2"
             >
               <SelectHiddenSelect {...field.props} />
+
+              <SelectLabel class="border-b-3 border-transparent font-normal">
+                Format:
+              </SelectLabel>
 
               <SelectTrigger
                 aria-label="Fruit"
                 class="h-fit w-full cursor-pointer gap-2 rounded-none border-0 border-b-3 border-transparent bg-transparent p-2 py-1 text-fluid-sm 
                 focus:border-amber-600 focus:ring-0 focus:ring-offset-0 focus:outline-3"
               >
-                <span class="font-normal">Format</span>
-
                 <SelectValue<string>>
                   {(state) => toPascalCase(state.selectedOption())}
                 </SelectValue>
@@ -120,17 +123,21 @@ export default function NoteEditor(props: NoteEditorProps) {
       <Separator class="mx-auto w-[93%] bg-amber-800 " />
 
       <div class="flex flex-col gap-1.5 text-fluid-sm">
-        <Editor
-          format={getInput(noteForm, { path: ["format"] }) ?? "plain-text"}
-          value={noteContent()}
-          onInput={setNoteContent}
-          class="size-full min-h-fit"
-        >
-          <EditorInput
-            placeholder="Note content..."
-            class="rounded-sm border-amber-600 px-12 py-4 text-base outline-none"
-          />
-        </Editor>
+        <Field of={noteForm} path={["content"]}>
+          {(field) => (
+            <Editor
+              format={getInput(noteForm, { path: ["format"] }) ?? "plain-text"}
+              value={field.input}
+              onInput={field.onInput}
+              class="size-full min-h-fit"
+            >
+              <EditorInput
+                placeholder="Note content..."
+                class="rounded-sm border-amber-600 px-12 py-4 text-base outline-none"
+              />
+            </Editor>
+          )}
+        </Field>
       </div>
     </Form>
   );
