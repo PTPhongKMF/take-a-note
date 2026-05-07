@@ -1,9 +1,9 @@
 import type { DBSchema } from "idb";
-import type { EditorMode } from "#shared/editor/schema.ts";
+import type { EditorFormat } from "#shared/editor/schema.ts";
 
 interface NoteMetaIdb {
   id: string;
-  mode: EditorMode;
+  mode: EditorFormat;
   title: string;
   isCorrupt: boolean;
   createdAt: string;

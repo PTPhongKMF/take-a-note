@@ -1,13 +1,13 @@
 import * as v from "@valibot/valibot";
 import type { SerializedEditorState } from "lexical";
 
-export const EditorModes = {
+export const EditorFormats = {
   plaintext: "plain-text",
   markdown: "markdown",
   richtext: "rich-text",
 } as const;
 
-export type EditorMode = typeof EditorModes[keyof typeof EditorModes];
+export type EditorFormat = typeof EditorFormats[keyof typeof EditorFormats];
 
 // export const LexicalEditorAstSchema = v.object({
 //   root: v.object({

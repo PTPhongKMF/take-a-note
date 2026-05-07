@@ -9,18 +9,18 @@ export default function RootLayout() {
         <header class="@container/nav bg-yellow-200 px-[clamp(0.25rem,4dvi,3rem)] py-1 text-2xl text-walnut">
           <Link
             to="/"
-            class="inline-block font-pencil text-f4xl font-bold transition-all duration-200 hover:scale-105 hover:rotate-3 hover:text-amber-800"
+            class="inline-block font-pencil text-fluid-4xl font-bold transition-all duration-200 hover:scale-105 hover:rotate-3 hover:text-amber-800"
           >
             Take a Note
           </Link>
         </header>
 
-        <main class="@container/main w-full bg-paper">
+        <main class="@container/main w-full bg-background">
           <Outlet />
         </main>
       </div>
 
-      <footer class="@container/footer grid grid-cols-2 items-center bg-amber-200 px-[clamp(0.25rem,2dvi,3rem)] py-1 text-fxs">
+      <footer class="@container/footer grid grid-cols-2 items-center bg-amber-200 px-[clamp(0.25rem,2dvi,3rem)] py-1 text-fluid-xs">
         <p class="justify-self-start">Copyright © 2026 PTPhongKMF</p>
 
         <section class="flex flex-wrap items-center justify-end gap-x-4 gap-y-2 justify-self-end">

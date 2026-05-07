@@ -18,15 +18,15 @@ import {
   useContext,
 } from "solid-js";
 import { c } from "#shared/lib/class-merger/c.ts";
-import type { EditorMode } from "#shared/editor/schema.ts";
+import type { EditorFormat } from "#shared/editor/schema.ts";
 import { getEditorInitialConfig } from "#shared/editor/initial-config.ts";
 import { DraggableBlockPlugin } from "#shared/editor/plugins/draggable-block.tsx";
 
-const EditorModeContext = createContext<EditorMode>("plain-text");
+const EditorModeContext = createContext<EditorFormat>("plain-text");
 
 interface EditorProps
   extends Omit<ComponentProps<"div">, "onInput">, ParentProps {
-  mode: EditorMode;
+  mode: EditorFormat;
   value?: SerializedEditorState;
   onInput?: (value: SerializedEditorState) => void;
 }

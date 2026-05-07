@@ -1,9 +1,9 @@
-import type { EditorMode } from "#shared/editor/schema.ts";
+import type { EditorFormat } from "#shared/editor/schema.ts";
 import type { SerializedEditorState } from "lexical";
 import type { InitialConfigType } from "@ryotarofr/lexical-solid/LexicalComposer";
 
 export function getEditorInitialConfig(
-  mode: EditorMode,
+  mode: EditorFormat,
   initialValue?: SerializedEditorState,
 ): InitialConfigType {
   const baseConfig = {

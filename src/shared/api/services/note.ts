@@ -10,7 +10,10 @@ import {
   type AppErrorOptions,
 } from "#shared/lib/errors/app-error.ts";
 import * as v from "@valibot/valibot";
-import { EditorModes, LexicalEditorAstSchema } from "#shared/editor/schema.ts";
+import {
+  EditorFormats,
+  LexicalEditorAstSchema,
+} from "#shared/editor/schema.ts";
 
 export type NoteServiceErrorCode =
   | "NOTE_META_NOT_FOUND"
@@ -54,7 +57,7 @@ export class NoteServiceError extends AppError<NoteServiceErrorCode> {
 
 const NoteDtoSchema = v.object({
   id: v.string(),
-  mode: v.enum(EditorModes),
+  format: v.enum(EditorFormats),
   title: v.string(),
   content: LexicalEditorAstSchema,
   isCorrupt: v.boolean(),
