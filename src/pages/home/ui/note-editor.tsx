@@ -24,6 +24,7 @@ import {
 import { EditorFormats } from "#shared/editor/schema.ts";
 import { Separator } from "@kobalte/core/separator";
 import { createEffect } from "solid-js";
+import NoteFormatSwitcher from "#features/switch-note-format/ui/note-format-switcher.tsx";
 
 interface NoteEditorProps extends
   Omit<
@@ -80,38 +81,12 @@ export default function NoteEditor(props: NoteEditorProps) {
 
         <Field of={noteForm} path={["format"]}>
           {(field) => (
-            <Select
+            <NoteFormatSwitcher
+              {...field.props}
               value={field.input}
-              onChange={(val) => field.onInput(val ?? "plain-text")}
-              options={[...Object.values(EditorFormats), "test-wrong-value"]}
-              placeholder="Select"
-              itemComponent={(props) => (
-                <SelectItem
-                  item={props.item}
-                  class="cursor-pointer gap-2 text-fluid-sm hover:bg-amber-200 active:bg-amber-200"
-                >
-                  {toPascalCase(props.item.rawValue)}
-                </SelectItem>
-              )}
-              class="col-span-2 flex items-center justify-center gap-0.75 justify-self-start px-2"
-            >
-              <SelectHiddenSelect {...field.props} />
-
-              <SelectLabel class="border-b-3 border-transparent font-normal">
-                Format:
-              </SelectLabel>
-
-              <SelectTrigger
-                aria-label="Fruit"
-                class="h-fit w-full cursor-pointer gap-2 rounded-none border-0 border-b-3 border-transparent bg-transparent p-2 py-1 text-fluid-sm 
-                focus:border-amber-600 focus:ring-0 focus:ring-offset-0 focus:outline-3"
-              >
-                <SelectValue<string>>
-                  {(state) => toPascalCase(state.selectedOption())}
-                </SelectValue>
-              </SelectTrigger>
-              <SelectContent class="border-amber-600 bg-paper-editor" />
-            </Select>
+              onInput={field.onInput}
+              class="col-span-2"
+            />
           )}
         </Field>
 
