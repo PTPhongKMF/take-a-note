@@ -1,7 +1,6 @@
 import { createForm, Field, Form, getInput, useField } from "@formisch/solid";
 import { type ComponentProps, createSignal, splitProps } from "solid-js";
 import { c } from "#shared/lib/class-merger/c.ts";
-import type { NoteOutput } from "#entities/note/model/schema.ts";
 import { monotonicUlid } from "@std/ulid";
 import { Editor, EditorInput } from "#shared/editor/lexical-editor.tsx";
 import * as v from "@valibot/valibot";
@@ -9,47 +8,54 @@ import type { EditorState } from "lexical";
 import { Separator } from "@kobalte/core/separator";
 import NoteFormatSwitcher from "#features/switch-note-format/ui/note-format-switcher.tsx";
 import { EditorFormats } from "#shared/editor/schema.ts";
-import { trimNonEmptyString } from "#shared/lib/valibot/trim-non-empty-string.ts";
+import { vTrimNonEmptyString } from "#shared/lib/schema/string.ts";
 import SaveIndicator from "#features/save-note/ui/save-indicator.tsx";
 import { jsonStringify } from "#shared/lib/json/json-stringify.ts";
+import type { NoteDtoOutput } from "#shared/api/services/note.ts";
+import { vTemporalInstant } from "#shared/lib/schema/datetime.ts";
 
 interface NoteEditorProps extends
   Omit<
     ComponentProps<"form">,
     "onSubmit" | "children" | "action" | "method" | "onReset"
   > {
-  note?: NoteOutput;
+  note?: NoteDtoOutput;
 }
 
-const NoteFormSchema = v.object({
-  id: trimNonEmptyString,
-  title: v.string(),
-  format: v.enum(EditorFormats),
-  createdAt: v.string(),
-  updatedAt: v.string(),
-});
-
+const NoteFormSchema = v.pipe(
+  v.object({
+    id: vTrimNonEmptyString,
+    title: v.string(),
+    format: v.enum(EditorFormats),
+    isCorrupt: v.boolean(),
+    createdAt: vTemporalInstant,
+    updatedAt: vTemporalInstant,
+  }),
+  v.transform((input) => ({
+    ...input,
+    ...(!input.title.trim() &&
+      { title: "Untitled Note " + input.createdAt.toLocaleString() }),
+    updatedAt: Temporal.Now.instant(),
+  })),
+);
 type NoteFormOutput = v.InferOutput<typeof NoteFormSchema>;
 
 export default function NoteEditor(props: NoteEditorProps) {
   const [local, others] = splitProps(props, ["class", "note"]);
 
   const [latestSerializedNoteContent, setLatestSerializedNoteContent] =
-    createSignal(
-      jsonStringify(local.note?.content),
-    );
-  // TODO: test if we make it undefined, then parse the serialized obj to lexcial, will it also trigger onChanges initially
-  // to update our signal?
+    createSignal(jsonStringify(local.note?.content));
   const [noteContent, setNoteContent] = createSignal<EditorState>();
 
   const noteForm = createForm({
     schema: NoteFormSchema,
     initialInput: {
       id: local.note?.id ?? monotonicUlid(),
-      format: local.note?.format ?? "plain-text",
       title: local.note?.title ?? "",
-      createdAt: local.note?.createdAt ?? Temporal.Now.instant().toString(),
-      updatedAt: local.note?.updatedAt ?? Temporal.Now.instant().toString(),
+      format: local.note?.format ?? "plain-text",
+      isCorrupt: local.note?.isCorrupt ?? false,
+      createdAt: local.note?.createdAt ?? Temporal.Now.instant(),
+      updatedAt: local.note?.updatedAt ?? Temporal.Now.instant(),
     },
   });
 

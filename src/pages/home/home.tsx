@@ -1,8 +1,8 @@
 import NoteEditor from "#pages/home/ui/note-editor.tsx";
-import type { NoteOutput } from "#entities/note/model/schema.ts";
+import type { NoteDtoOutput } from "#shared/api/services/note.ts";
 
 interface HomeProps {
-  note?: NoteOutput;
+  note?: NoteDtoOutput;
 }
 
 export default function Home(props: HomeProps) {

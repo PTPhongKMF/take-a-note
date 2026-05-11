@@ -3,11 +3,11 @@ import type { EditorFormat } from "#shared/editor/schema.ts";
 
 interface NoteMetaIdb {
   id: string;
-  mode: EditorFormat;
   title: string;
+  format: EditorFormat;
   isCorrupt: boolean;
-  createdAt: string;
-  updatedAt: string;
+  createdAt: number;
+  updatedAt: number;
 }
 
 interface NoteContentIdb {

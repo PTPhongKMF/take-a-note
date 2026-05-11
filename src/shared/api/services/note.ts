@@ -4,7 +4,7 @@ import {
   IdbOperationError,
   IdbUnknownError,
 } from "#shared/storage/idb/errors.ts";
-import { safeParse } from "#shared/lib/valibot/parse.ts";
+import { safeParse } from "#shared/lib/schema/parse.ts";
 import {
   AppError,
   type AppErrorOptions,
@@ -61,9 +61,16 @@ const NoteDtoSchema = v.object({
   format: v.enum(EditorFormats),
   content: SerializedEditorStateSchema,
   isCorrupt: v.boolean(),
-  createdAt: v.string(),
-  updatedAt: v.string(),
+  createdAt: v.pipe(
+    v.number(),
+    v.transform((input) => Temporal.Instant.fromEpochMilliseconds(input)),
+  ),
+  updatedAt: v.pipe(
+    v.number(),
+    v.transform((input) => Temporal.Instant.fromEpochMilliseconds(input)),
+  ),
 });
+export type NoteDtoOutput = v.InferOutput<typeof NoteDtoSchema>;
 
 export function getNote(id: string) {
   return Result.pipe(
