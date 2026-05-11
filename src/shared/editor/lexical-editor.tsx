@@ -1,10 +1,13 @@
 import { LexicalComposer } from "@ryotarofr/lexical-solid/LexicalComposer";
 import { RichTextPlugin } from "@ryotarofr/lexical-solid/LexicalRichTextPlugin";
 import { HistoryPlugin } from "@ryotarofr/lexical-solid/LexicalHistoryPlugin";
-import { OnChangePlugin } from "@ryotarofr/lexical-solid/LexicalOnChangePlugin";
 import { LexicalErrorBoundary } from "@ryotarofr/lexical-solid/LexicalErrorBoundary";
 import { ContentEditable } from "@ryotarofr/lexical-solid/LexicalContentEditable";
-import type { EditorState, SerializedEditorState } from "lexical";
+import type {
+  EditorState,
+  LexicalEditor,
+  SerializedEditorState,
+} from "lexical";
 import {
   type ComponentProps,
   createContext,
@@ -22,14 +25,16 @@ import type { EditorFormat } from "#shared/editor/schema.ts";
 import { getEditorInitialConfig } from "#shared/editor/initial-config.ts";
 import { DraggableBlockPlugin } from "#shared/editor/plugins/draggable-block.tsx";
 import ActiveBlockIndicatorPlugin from "#shared/editor/plugins/active-block-indicator.tsx";
+import { OnChangePlugin } from "@ryotarofr/lexical-solid/LexicalOnChangePlugin";
+import { $isRootTextContentEmpty } from "@lexical/text";
 
 const EditorFormatContext = createContext<EditorFormat>("plain-text");
 
 interface EditorProps
   extends Omit<ComponentProps<"div">, "onInput">, ParentProps {
   format: EditorFormat;
-  value?: SerializedEditorState;
-  onInput?: (value: SerializedEditorState) => void;
+  initialValue?: SerializedEditorState;
+  onInput: (value?: EditorState) => void;
 }
 
 /**
@@ -38,19 +43,26 @@ interface EditorProps
 export function Editor(props: EditorProps) {
   const [local, others] = splitProps(props, [
     "format",
-    "value",
+    "initialValue",
     "onInput",
     "class",
     "children",
   ]);
 
-  const initialConfig = getEditorInitialConfig(local.format, local.value);
+  const initialConfig = getEditorInitialConfig(
+    local.format,
+    local.initialValue,
+  );
 
-  function handleEditorChange(editorState: EditorState) {
-    if (local.onInput) {
-      const serializedState = editorState.toJSON();
-      local.onInput(serializedState);
-    }
+  function handleEditorChange(
+    editorState: EditorState,
+    _: Set<string>,
+    editor: LexicalEditor,
+  ) {
+    editorState.read(() => {
+      const isEmpty = $isRootTextContentEmpty(editor.isComposing());
+      props.onInput(isEmpty ? undefined : editorState);
+    });
   }
 
   return (

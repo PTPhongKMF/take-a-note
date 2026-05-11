@@ -11,6 +11,7 @@ import {
 } from "#shared/ui/select/solidui-select.tsx";
 import { type EditorFormat, EditorFormats } from "#shared/editor/schema.ts";
 import { toPascalCase } from "@std/text";
+// import { toTitleCase } from "@std/text/unstable-to-title-case";
 import { c } from "#shared/lib/class-merger/c.ts";
 
 interface NoteFormatSwitcherProps
@@ -37,7 +38,7 @@ export default function NoteFormatSwitcher(props: NoteFormatSwitcherProps) {
         </SelectItem>
       )}
       class={c(
-        "flex items-center justify-center gap-0.75 justify-self-start px-2",
+        "flex items-center justify-center gap-0.75 justify-self-start",
         local.class,
       )}
     >

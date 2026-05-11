@@ -24,6 +24,6 @@ export type EditorFormat = typeof EditorFormats[keyof typeof EditorFormats];
 //   }),
 // });
 
-export const LexicalEditorAstSchema = v.custom<SerializedEditorState>((input) =>
-  typeof input === "object" && input !== null && "root" in input
-);
+export const SerializedEditorStateSchema = v.custom<SerializedEditorState>((
+  input,
+) => typeof input === "object" && input !== null && "root" in input);
