@@ -1,19 +1,17 @@
 import * as v from "@valibot/valibot";
 import { Result } from "@praha/byethrow";
-import { AppError } from "#shared/lib/errors/app-error.ts";
+import {
+  AppError,
+  type AppErrorOptions,
+} from "#shared/lib/errors/app-error.ts";
 
-type ValidationErrorCode = "VALIDATION_FAILED";
-
-interface ValidationErrorOptions extends ErrorOptions {
-  code?: ValidationErrorCode;
-}
-
-class ValidationError extends AppError<ValidationErrorCode> {
+class ValidationError extends AppError<"VALIDATION_FAILED"> {
   public override readonly name = "ValidationError";
+  public override readonly code = "VALIDATION_FAILED";
 
   constructor(
-    message = "Validation failed",
-    opts?: ValidationErrorOptions,
+    message = "Failed to parse and validate input against schema",
+    opts?: Omit<AppErrorOptions<"VALIDATION_FAILED">, "code">,
   ) {
     super(message, { ...opts, code: "VALIDATION_FAILED" });
   }

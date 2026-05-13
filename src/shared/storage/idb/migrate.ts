@@ -28,6 +28,19 @@ export function runMigrations(
       runInitialSchema(db);
     }
   } catch (e) {
-    throw new MigrationError(versionBeingApplied, { cause: e });
+    throw new MigrationError(versionBeingApplied, {
+      metadata: {
+        "Target Migration Version": versionBeingApplied,
+        "Is IndexedDB Supported": (typeof window !== "undefined" &&
+            !!globalThis.indexedDB)
+          ? "Yes"
+          : "No",
+        "Is Storage Api Supported": (typeof navigator !== "undefined" &&
+            !!navigator.storage)
+          ? "Yes"
+          : "No",
+      },
+      cause: e,
+    });
   }
 }

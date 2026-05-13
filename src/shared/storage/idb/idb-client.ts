@@ -3,7 +3,7 @@ import { type IDBPDatabase, openDB } from "idb";
 import { Result } from "@praha/byethrow";
 import { runMigrations } from "#shared/storage/idb/migrate.ts";
 import { MigrationError } from "#shared/storage/idb/errors.ts";
-import { CriticalError } from "#shared/lib/errors/critical-error.ts";
+import { AppError } from "#shared/lib/errors/app-error.ts";
 import type { TakeANoteDbSchema } from "#shared/storage/idb/schemas.ts";
 
 const IDB_NAME = "takeanote-db";
@@ -18,9 +18,9 @@ export type IdbState =
   | "terminated";
 
 export const [idbState, setIdbState] = createSignal<IdbState>("initializing");
-export const [idbError, setIdbError] = createSignal<Error | undefined>(
-  undefined,
-);
+export const [idbError, setIdbError] = createSignal<
+  MigrationError | AppError<"IDB_INIT_FAILED">
+>();
 
 let idbInstance: IDBPDatabase<TakeANoteDbSchema> | undefined = undefined;
 
@@ -48,13 +48,28 @@ export async function initIndexedDB() {
         return e;
       }
 
-      throw new CriticalError("Failed to initialize IndexedDB", {
-        cause: e,
-        metadata: { "Storage Supported": navigator.storage ? "Yes" : "No" },
-      });
+      return new AppError(
+        "Failed to initialize IndexedDB",
+        {
+          code: "IDB_INIT_FAILED",
+          metadata: {
+            "Is IndexedDB Supported": (typeof window !== "undefined" &&
+                !!globalThis.indexedDB)
+              ? "Yes"
+              : "No",
+            "Is Storage Api Supported": (typeof navigator !== "undefined" &&
+                !!navigator.storage)
+              ? "Yes"
+              : "No",
+          },
+          cause: e,
+        },
+      );
     },
   });
 
+  // TODO: should we throw instead of set error? if we continue, the ui will call `idbClient` and still throw anyway
+  // while we are showing error modal?
   if (Result.isFailure(openDBResult)) {
     setIdbState("failed");
     setIdbError(openDBResult.error);
@@ -67,7 +82,10 @@ export async function initIndexedDB() {
 
 export function idbClient() {
   if (!idbInstance) {
-    throw new CriticalError("IndexedDB is not initialized");
+    throw new AppError(
+      "IndexedDB is not initialized",
+      { code: "IDB_NOT_INITIALIZED" },
+    );
   }
 
   return idbInstance;

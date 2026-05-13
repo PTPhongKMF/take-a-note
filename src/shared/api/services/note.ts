@@ -16,30 +16,36 @@ import {
 } from "#shared/editor/schema.ts";
 
 export type NoteServiceErrorCode =
-  | "NOTE_META_NOT_FOUND"
+  | "NOTE_GET_FAILED"
+  // | "NOTE_META_NOT_FOUND"
   | "NOTE_NOT_FOUND";
 // |
 // | 'NOTE_ALREADY_EXISTS'
 // | 'NOTE_VALIDATION_FAILED'
 // | 'NOTE_LIMIT_REACHED';
 
-export class NoteServiceError extends AppError<NoteServiceErrorCode> {
+export class NoteServiceError<
+  TCode extends NoteServiceErrorCode = NoteServiceErrorCode,
+> extends AppError<TCode> {
   public override readonly name = "NoteServiceError";
+  public override readonly code: TCode;
 
   constructor(
-    code: NoteServiceErrorCode,
+    code: TCode,
     message: string,
-    options?: AppErrorOptions<NoteServiceErrorCode>,
+    options?: Omit<AppErrorOptions<TCode>, "code">,
   );
   constructor(
-    code: NoteServiceErrorCode,
-    options?: AppErrorOptions<NoteServiceErrorCode>,
+    code: TCode,
+    options?: Omit<AppErrorOptions<TCode>, "code">,
   );
 
   constructor(
-    code: NoteServiceErrorCode,
-    messageOrOptions?: string | AppErrorOptions<NoteServiceErrorCode>,
-    options?: AppErrorOptions<NoteServiceErrorCode>,
+    code: TCode,
+    messageOrOptions?:
+      | string
+      | Omit<AppErrorOptions<TCode>, "code">,
+    options?: Omit<AppErrorOptions<TCode>, "code">,
   ) {
     const resolvedMsg = typeof messageOrOptions === "string"
       ? messageOrOptions
@@ -48,10 +54,9 @@ export class NoteServiceError extends AppError<NoteServiceErrorCode> {
       ? options
       : messageOrOptions;
 
-    super(resolvedMsg, {
-      ...resolvedOpts,
-      code,
-    });
+    super(resolvedMsg, { ...resolvedOpts, code });
+
+    this.code = code;
   }
 }
 
@@ -72,7 +77,14 @@ const NoteDtoSchema = v.object({
 });
 export type NoteDtoOutput = v.InferOutput<typeof NoteDtoSchema>;
 
-export function getNote(id: string) {
+export type GetNoteErrorCode = Extract<
+  NoteServiceErrorCode,
+  "NOTE_GET_FAILED" | "NOTE_NOT_FOUND"
+>;
+
+export function getNote(
+  id: string,
+): Result.ResultAsync<NoteDtoOutput, NoteServiceError<GetNoteErrorCode>> {
   return Result.pipe(
     Result.succeed(id),
     Result.andThen((unwrappedId) =>
@@ -100,13 +112,19 @@ export function getNote(id: string) {
           return { meta, content };
         },
         catch: (e) => {
-          if (e instanceof IdbOperationError) {
-            return e;
-          }
+          const idbError = e instanceof IdbOperationError
+            ? e
+            : new IdbUnknownError(
+              'Unknown error occurred while querying "note_meta" and "note_content" object store',
+              {
+                cause: e,
+              },
+            );
 
-          return new IdbUnknownError(
-            'Unknown error occurred while querying "note_meta" and "note_content" object store',
-            { cause: e },
+          return new NoteServiceError(
+            "NOTE_GET_FAILED",
+            "Failed to retrieve the note from IndexedDB",
+            { cause: idbError },
           );
         },
       })
@@ -119,5 +137,16 @@ export function getNote(id: string) {
       return Result.succeed({ ...meta, content: content?.content });
     }),
     Result.andThen((noteDto) => safeParse(NoteDtoSchema, noteDto)),
+    Result.mapError((e) => {
+      if (e.name === "ValidationError") {
+        return new NoteServiceError(
+          "NOTE_GET_FAILED",
+          "Failed to retrieve the note from IndexedDB.",
+          { cause: e },
+        );
+      }
+
+      return e;
+    }),
   );
 }
