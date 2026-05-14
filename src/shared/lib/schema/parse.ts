@@ -7,7 +7,6 @@ import {
 
 class ValidationError extends AppError<"VALIDATION_FAILED"> {
   public override readonly name = "ValidationError";
-  public override readonly code = "VALIDATION_FAILED";
 
   constructor(
     message = "Failed to parse and validate input against schema",

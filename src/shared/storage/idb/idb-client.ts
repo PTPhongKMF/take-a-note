@@ -2,8 +2,10 @@ import { createSignal } from "solid-js";
 import { type IDBPDatabase, openDB } from "idb";
 import { Result } from "@praha/byethrow";
 import { runMigrations } from "#shared/storage/idb/migrate.ts";
-import { MigrationError } from "#shared/storage/idb/errors.ts";
-import { AppError } from "#shared/lib/errors/app-error.ts";
+import {
+  IdbInitError,
+  MigrationError,
+} from "#shared/storage/idb/errors.ts";
 import type { TakeANoteDbSchema } from "#shared/storage/idb/schemas.ts";
 
 const IDB_NAME = "takeanote-db";
@@ -19,7 +21,7 @@ export type IdbState =
 
 export const [idbState, setIdbState] = createSignal<IdbState>("initializing");
 export const [idbError, setIdbError] = createSignal<
-  MigrationError | AppError<"IDB_INIT_FAILED">
+  MigrationError | IdbInitError
 >();
 
 let idbInstance: IDBPDatabase<TakeANoteDbSchema> | undefined = undefined;
@@ -48,7 +50,7 @@ export async function initIndexedDB() {
         return e;
       }
 
-      return new AppError(
+      return new IdbInitError(
         "Failed to initialize IndexedDB",
         {
           code: "IDB_INIT_FAILED",
@@ -82,10 +84,9 @@ export async function initIndexedDB() {
 
 export function idbClient() {
   if (!idbInstance) {
-    throw new AppError(
-      "IndexedDB is not initialized",
-      { code: "IDB_NOT_INITIALIZED" },
-    );
+    throw new IdbInitError("IndexedDB is not initialized", {
+      code: "IDB_NOT_INITIALIZED",
+    });
   }
 
   return idbInstance;
