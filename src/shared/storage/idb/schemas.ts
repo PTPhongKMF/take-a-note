@@ -12,7 +12,7 @@ interface NoteMetaIdb {
 
 interface NoteContentIdb {
   noteId: string;
-  content: unknown; // lexical complex editor state here
+  content?: object; // lexical complex editor state here
 }
 
 export interface TakeANoteDbSchema extends DBSchema {

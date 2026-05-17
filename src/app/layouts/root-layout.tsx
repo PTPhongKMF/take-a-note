@@ -29,7 +29,7 @@ export default function RootLayout() {
             target="_blank"
             class="flex items-center justify-center gap-1 leading-none transition-all duration-200 hover:text-amber-800"
           >
-            <Icon name="bug" class="size-[1em]" />
+            <Icon name="bug" />
             <span>Report issues</span>
           </a>
           <a
@@ -37,7 +37,7 @@ export default function RootLayout() {
             target="_blank"
             class="flex items-center justify-center gap-1 leading-none transition-all duration-200 hover:text-amber-800"
           >
-            <Icon name="lightbulb" class="size-[1em]" />
+            <Icon name="lightbulb" />
             <span>Suggestions</span>
           </a>
         </section>

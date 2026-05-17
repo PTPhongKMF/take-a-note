@@ -1,4 +1,13 @@
-import { createForm, Field, Form, getInput, useField } from "@formisch/solid";
+import {
+  createForm,
+  Field,
+  Form,
+  getAllErrors,
+  getInput,
+  reset,
+  submit,
+  useField,
+} from "@formisch/solid";
 import { type ComponentProps, createSignal, splitProps } from "solid-js";
 import { c } from "#shared/lib/class-merger/c.ts";
 import { monotonicUlid } from "@std/ulid";
@@ -9,10 +18,16 @@ import { Separator } from "@kobalte/core/separator";
 import NoteFormatSwitcher from "#features/switch-note-format/ui/note-format-switcher.tsx";
 import { EditorFormats } from "#shared/editor/schema.ts";
 import { vTrimNonEmptyString } from "#shared/lib/schema/string.ts";
-import SaveIndicator from "#features/save-note/ui/save-indicator.tsx";
+import SaveStatusIndicator from "#features/save-note/ui/save-status-indicator.tsx";
 import { jsonStringify } from "#shared/lib/json/json-stringify.ts";
-import type { NoteDtoOutput } from "#shared/api/services/note.ts";
 import { vTemporalInstant } from "#shared/lib/schema/datetime.ts";
+import { Result } from "@praha/byethrow";
+import { createNoteDirtyState } from "#entities/note/model/note-dirty-state.ts";
+import type { NoteDtoOutput } from "#shared/api/services/note.ts";
+import { createEffect } from "solid-js";
+import { on } from "solid-js";
+import createSaveNoteManager from "#features/save-note/model/save-note-manager.ts";
+import { batch } from "solid-js";
 
 interface NoteEditorProps extends
   Omit<
@@ -43,8 +58,12 @@ type NoteFormOutput = v.InferOutput<typeof NoteFormSchema>;
 export default function NoteEditor(props: NoteEditorProps) {
   const [local, others] = splitProps(props, ["class", "note"]);
 
+  const [lastChangedAt, setLastChangedAt] = createSignal(
+    Temporal.Now.instant(),
+  );
+
   const [latestSerializedNoteContent, setLatestSerializedNoteContent] =
-    createSignal(jsonStringify(local.note?.content));
+    createSignal(Result.unwrap(jsonStringify(local.note?.content)));
   const [noteContent, setNoteContent] = createSignal<EditorState>();
 
   const noteForm = createForm({
@@ -59,9 +78,57 @@ export default function NoteEditor(props: NoteEditorProps) {
     },
   });
 
+  const titleField = useField(noteForm, { path: ["title"] });
+  const formatField = useField(noteForm, { path: ["format"] });
+
+  const isDirty = createNoteDirtyState({
+    title: () => getInput(noteForm, { path: ["title"] }),
+    format: () => getInput(noteForm, { path: ["format"] }),
+    isNoteMetaDirty: () => titleField.isDirty || formatField.isDirty,
+    editorState: noteContent,
+    latestSerializedState: latestSerializedNoteContent,
+  });
+
+  const saveManager = createSaveNoteManager({
+    isDirty,
+    lastChangedAt: lastChangedAt,
+    triggerFormSubmit: () => submit(noteForm),
+    onSaveSuccess: (savedNote: NoteDtoOutput) => {
+      console.log("Note saved success ran");
+      batch(() => {
+        reset(noteForm, {
+          initialInput: { ...savedNote },
+          keepInput: true,
+          keepErrors: true,
+          keepTouched: true,
+          keepSubmitted: true,
+        });
+
+        setLatestSerializedNoteContent(
+          Result.unwrap(jsonStringify(savedNote.content)),
+        );
+      });
+    },
+  });
+
+  createEffect(on(
+    () => [
+      getInput(noteForm, { path: ["title"] }),
+      getInput(noteForm, { path: ["format"] }),
+      noteContent(),
+    ],
+    () => setLastChangedAt(Temporal.Now.instant()),
+  ));
+
   function handleSaveNote(output: NoteFormOutput) {
-    console.log("Saving note:", { ...output, content: noteContent() });
+    const note = { ...output, content: noteContent()?.toJSON() };
+    saveManager.cancelAutosave();
+    saveManager.executeSave(note);
   }
+
+  createEffect(() => {
+    console.log("dirty: " + isDirty());
+  });
 
   return (
     <Form
@@ -98,20 +165,14 @@ export default function NoteEditor(props: NoteEditorProps) {
             )}
           </Field>
 
-          <SaveIndicator
-            title={getInput(noteForm, { path: ["title"] })}
-            format={getInput(noteForm, { path: ["format"] })}
-            isNoteMetaDirty={useField(noteForm, { path: ["title"] }).isDirty ||
-              useField(noteForm, { path: ["format"] }).isDirty}
-            editorState={noteContent()}
-            latestSerializedState={latestSerializedNoteContent()}
-            setLatestSerializedState={setLatestSerializedNoteContent}
-            class="text-fluid-sm"
+          <SaveStatusIndicator
+            isDirty={isDirty()}
+            isSaving={saveManager.isSaving()}
           />
         </div>
       </div>
 
-      <Separator class="mx-auto w-[93%] bg-amber-800 " />
+      <Separator class="mx-auto w-[93%] bg-amber-800" />
 
       <div class="flex flex-col gap-1.5 text-fluid-sm">
         <Editor

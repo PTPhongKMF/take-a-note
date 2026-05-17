@@ -32,6 +32,7 @@
     "@std/ulid": "jsr:@std/ulid@^1.0.0",
     "@tailwindcss/vite": "npm:@tailwindcss/vite@^4.2.3",
     "@tanstack/router-plugin": "npm:@tanstack/router-plugin@^1.167.22",
+    "@tanstack/solid-query": "npm:@tanstack/solid-query@^5.100.10",
     "@tanstack/solid-router": "npm:@tanstack/solid-router@^1.168.20",
     "@valibot/valibot": "jsr:@valibot/valibot@^1.3.1",
     "class-variance-authority": "npm:class-variance-authority@^0.7.1",
@@ -41,6 +42,7 @@
     "solid-js": "npm:solid-js@^1.9.12",
     "tailwind-merge": "npm:tailwind-merge@^3.5.0",
     "tailwindcss": "npm:tailwindcss@^4.2.3",
+    "type-fest": "npm:type-fest@^5.6.0",
     "vite": "npm:vite@^8.0.3",
     "vite-plugin-icons-spritesheet": "npm:vite-plugin-icons-spritesheet@^3.0.1",
     "vite-plugin-solid": "npm:vite-plugin-solid@^2.11.11"

@@ -2,6 +2,9 @@
 
 export const iconNames = [
   "lightbulb",
+  "cloud-sync",
+  "cloud-check",
+  "cloud-alert",
   "bug",
 ] as const
 

@@ -9,7 +9,7 @@ import {
   SerializedEditorStateSchema,
 } from "#shared/editor/schema.ts";
 
-export type NoteServiceErrorCode = GetNoteErrorCode;
+export type NoteServiceErrorCode = GetNoteErrorCode | SaveNoteErrorCode;
 
 export class NoteServiceError<
   TCode extends NoteServiceErrorCode = NoteServiceErrorCode,
@@ -21,7 +21,7 @@ const NoteDtoSchema = v.object({
   id: v.string(),
   title: v.string(),
   format: v.enum(EditorFormats),
-  content: SerializedEditorStateSchema,
+  content: v.optional(SerializedEditorStateSchema),
   isCorrupt: v.boolean(),
   createdAt: v.pipe(
     v.number(),
@@ -111,4 +111,73 @@ export function getNote(
       return e;
     }),
   );
+}
+
+type SaveNoteErrorCode = "NOTE_SAVE_FAILED";
+
+export function saveNote(note: NoteDtoOutput): Result.ResultAsync<
+  NoteDtoOutput,
+  NoteServiceError<SaveNoteErrorCode>
+> {
+  return Result.try({
+    try: async () => {
+      const metaToSave = {
+        id: note.id,
+        title: note.title,
+        format: note.format,
+        isCorrupt: note.isCorrupt,
+        createdAt: note.createdAt.epochMilliseconds,
+        updatedAt: note.updatedAt.epochMilliseconds,
+      };
+
+      const contentToSave = {
+        noteId: note.id,
+        content: note.content,
+      };
+
+      const db = idbClient();
+
+      const tx = db.transaction(["note_meta", "note_content"], "readwrite");
+
+      const metaPromise = tx.objectStore("note_meta").put(metaToSave)
+        .catch((e) => {
+          throw new IdbOperationError({
+            action: "write",
+            store: "note_meta",
+            cause: e,
+          });
+        });
+
+      const contentPromise = tx.objectStore("note_content").put(contentToSave)
+        .catch((e) => {
+          throw new IdbOperationError({
+            action: "write",
+            store: "note_content",
+            cause: e,
+          });
+        });
+
+      // Wait for the operations and the transaction to finish successfully
+      await Promise.all([
+        metaPromise,
+        contentPromise,
+        tx.done, // Ensures the transaction successfully commits
+      ]);
+
+      return note;
+    },
+    catch: (e) => {
+      const idbError = e instanceof IdbOperationError
+        ? e
+        : new IdbOperationError(
+          'Unknown error occurred while querying "note_meta" and "note_content" object store',
+          { code: "IDB_UNKNOWN_FAILURE", cause: e },
+        );
+
+      return new NoteServiceError(
+        "Failed to save the note to IndexedDB",
+        { code: "NOTE_SAVE_FAILED", cause: idbError },
+      );
+    },
+  });
 }
