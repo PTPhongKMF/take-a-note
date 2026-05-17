@@ -13,6 +13,7 @@
   },
 
   "nodeModulesDir": "auto",
+  "minimumDependencyAge": "P7D",
   "imports": {
     "#app/": "./src/app/",
     "#pages/": "./src/pages/",
